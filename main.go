@@ -35,10 +35,13 @@ If no FILE has been given, the tool will read from STDIN.
 }
 
 func printLine(address int, hex []string, str string) {
-	hexJoined1 := strings.Join(hex[:8], " ")
+	hexJoined1 := ""
 	hexJoined2 := ""
 	if len(hex) > 8 {
+		hexJoined1 = strings.Join(hex[:8], " ")
 		hexJoined2 = strings.Join(hex[8:], " ")
+	} else {
+		hexJoined1 = strings.Join(hex, " ")
 	}
 	fmt.Printf("%08x  %-23s  %-23s  |%s|\n", address, hexJoined1, hexJoined2, str)
 }
@@ -82,9 +85,7 @@ Can be either "always", "never" or "auto"`)
 		}
 		b, err := bufferedReader.ReadByte()
 		if err != nil {
-			if len(hex) > 0 {
-				printLine(address, hex, str)
-			}
+			printLine(address, hex, str)
 			break
 		}
 		if b >= 32 && b <= 126 {
