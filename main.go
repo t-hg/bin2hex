@@ -4,10 +4,17 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"io"
 	"os"
 	"strings"
 )
+
+// #include <unistd.h>
+import "C"
+
+func isatty() bool {
+	fd := os.Stdout.Fd()
+	return int(C.isatty(C.int(fd))) == 1
+}
 
 func printHelpAndExit() {
 	help := `Usage: bin2hex [FILE]
@@ -38,24 +45,27 @@ func printLine(address int, hex []string, str string) {
 
 func main() {
 	flag.Usage = printHelpAndExit
+	colorFlag := flag.String("color", "auto", `Whether to print colored output.
+Can be either "always", "never" or "auto"`)
 	flag.Parse()
 	if flag.NArg() > 1 {
 		return
 	}
-	var reader io.Reader
+	var file *os.File
 	if flag.NArg() > 0 {
-		file := flag.Arg(0)	
 		var err error
-		reader, err = os.Open(file)
+		fileName := flag.Arg(0)
+		file, err = os.Open(fileName)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "cannot read %s: %v", file, err)
+			fmt.Fprintf(os.Stderr, "cannot read %s: %v", fileName, err)
 			os.Exit(1)
 			return
 		}
 	} else {
-		reader = os.Stdin
+		file = os.Stdin
 	}
-	bufferedReader := bufio.NewReader(reader)
+	bufferedReader := bufio.NewReader(file)
+	colored := *colorFlag == "always" || *colorFlag == "auto" && isatty()
 	address := 0
 	read := 0
 	hex := make([]string, 0)
@@ -74,10 +84,16 @@ func main() {
 			printLine(address, hex, str)
 			break
 		}
-		hex = append(hex, fmt.Sprintf("%02x", b))
 		if b >= 32 && b <= 126 {
-			str += string(b)
+			if colored {
+				hex = append(hex, fmt.Sprintf("\033[0;33m%02x\033[0;0m", b))
+				str += "\033[0;33m" + string(b) + "\033[0;0m"
+			} else {
+				hex = append(hex, fmt.Sprintf("%02x", b))
+				str += string(b)
+			}
 		} else {
+			hex = append(hex, fmt.Sprintf("%02x", b))
 			str += "."
 		}
 		read++
