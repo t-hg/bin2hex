@@ -74,7 +74,7 @@ Can be either "always", "never" or "auto"`)
 	for  {
 		if read == 16 {
 			printLine(address, hex, str)
-			address++
+			address += 16
 			read = 0
 			hex = make([]string, 0)
 			str = ""
