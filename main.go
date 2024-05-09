@@ -40,7 +40,7 @@ func printLine(address int, hex []string, str string) {
 	if len(hex) > 8 {
 		hexJoined2 = strings.Join(hex[8:], " ")
 	}
-	fmt.Printf("%08x  %-23s  %-23s  |%-16s|\n", address, hexJoined1, hexJoined2, str)
+	fmt.Printf("%08x  %-23s  %-23s  |%s|\n", address, hexJoined1, hexJoined2, str)
 }
 
 func main() {
