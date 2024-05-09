@@ -82,7 +82,9 @@ Can be either "always", "never" or "auto"`)
 		}
 		b, err := bufferedReader.ReadByte()
 		if err != nil {
-			printLine(address, hex, str)
+			if len(hex) > 0 {
+				printLine(address, hex, str)
+			}
 			break
 		}
 		if b >= 32 && b <= 126 {
