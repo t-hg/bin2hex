@@ -58,7 +58,7 @@ Can be either "always", "never" or "auto"`)
 		fileName := flag.Arg(0)
 		file, err = os.Open(fileName)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "cannot read %s: %v", fileName, err)
+			fmt.Fprintf(os.Stderr, "cannot open '%s': %v", fileName, err)
 			os.Exit(1)
 			return
 		}
