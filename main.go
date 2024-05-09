@@ -49,6 +49,7 @@ func main() {
 Can be either "always", "never" or "auto"`)
 	flag.Parse()
 	if flag.NArg() > 1 {
+		printHelpAndExit()
 		return
 	}
 	var file *os.File
